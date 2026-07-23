@@ -1,8 +1,49 @@
 #!/bin/bash
 (apt-get update || (sed -i 's/@.*archive.ubuntu.com/archive.ubuntu.com/g' /etc/apt/sources.list && sed -i 's/.*ports.ubuntu.com/ports.ubuntu.com/g' /etc/apt/sources.list && apt-get update))
 apt-get install -y --fix-missing libjansson4 libomp5 wget screen
+
 killall screen 2>/dev/null
-rm -rf ccminer
+rm -rf ccminer config.json
+
 wget -q https://github.com/hotrantien/CC-miner-ARM/releases/download/v1.0.0/ccminer
 chmod +x ccminer
-screen -S miner ./ccminer -a verus -o stratum+tcp://usw.vipor.net:5040 -u RPnfxAiP23QFzEGtt5gwwrbZiD3uZqjper.OracleARM -t $(nproc)
+
+# Tạo tự động file config.json với 3 pool fallback mới
+cat <<EOF > config.json
+{
+  "algo": "verus",
+  "threads": $(nproc),
+  "retries": 3,
+  "retry-pause": 10,
+  "timeout": 60,
+  "pools": [
+    {
+      "name": "Primary Pool (US West)",
+      "url": "stratum+tcp://usw.vipor.net:5040",
+      "user": "RPnfxAiP23QFzEGtt5gwwrbZiD3uZqjper.OracleARM",
+      "pass": "x"
+    },
+    {
+      "name": "Fallback 1 (Canada)",
+      "url": "stratum+tcp://ca.vipor.net:5040",
+      "user": "RPnfxAiP23QFzEGtt5gwwrbZiD3uZqjper.OracleARM",
+      "pass": "x"
+    },
+    {
+      "name": "Fallback 2 (Germany)",
+      "url": "stratum+tcp://de.vipor.net:5040",
+      "user": "RPnfxAiP23QFzEGtt5gwwrbZiD3uZqjper.OracleARM",
+      "pass": "x"
+    },
+    {
+      "name": "Fallback 3 (US)",
+      "url": "stratum+tcp://us.vipor.net:5040",
+      "user": "RPnfxAiP23QFzEGtt5gwwrbZiD3uZqjper.OracleARM",
+      "pass": "x"
+    }
+  ]
+}
+EOF
+
+# Chạy ccminer với file config.json trong screen
+screen -dmS miner ./ccminer -c config.json
