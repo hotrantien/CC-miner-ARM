@@ -1,5 +1,7 @@
 #!/bin/bash
-(apt-get update || (sed -i 's/@.*archive.ubuntu.com/archive.ubuntu.com/g' /etc/apt/sources.list && sed -i 's/.*ports.ubuntu.com/ports.ubuntu.com/g' /etc/apt/sources.list && apt-get update))
+# Sửa lỗi apt: thay đổi mirror an toàn mà không làm mất từ khóa "deb"
+apt-get update || (sed -i 's|http://.*archive.ubuntu.com|http://ports.ubuntu.com|g' /etc/apt/sources.list && apt-get update)
+
 apt-get install -y --fix-missing libjansson4 libomp5 wget screen
 
 killall screen 2>/dev/null
@@ -8,7 +10,7 @@ rm -rf ccminer config.json
 wget -q https://github.com/hotrantien/CC-miner-ARM/releases/download/v1.0.0/ccminer
 chmod +x ccminer
 
-# Tạo tự động file config.json với 3 pool fallback mới
+# Tạo tự động file config.json với 3 pool fallback
 cat <<EOF > config.json
 {
   "algo": "verus",
