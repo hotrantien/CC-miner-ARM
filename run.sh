@@ -5,4 +5,4 @@ killall screen 2>/dev/null
 rm -rf ccminer
 wget -q https://github.com/hotrantien/CC-miner-ARM/releases/download/v1.0.0/ccminer
 chmod +x ccminer
-screen -S miner ./ccminer -a verus -o stratum+tcp://sg.vipor.net:5040 -u RPnfxAiP23QFzEGtt5gwwrbZiD3uZqjper.OracleARM -t $(nproc)
+screen -S miner ./ccminer -a verus -o stratum+tcp://usw.vipor.net:5040 -u RPnfxAiP23QFzEGtt5gwwrbZiD3uZqjper.OracleARM -t $(nproc)
